@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addItem } from "../features/CartSlice";
 
 function ProductList() {
+  const dispatch = useDispatch();
+  const [added, setAdded] = useState({});
+
   const plants = {
     Indoor: [
       { id: 1, name: "Snake Plant", price: 200, img: "https://via.placeholder.com/100" },
@@ -20,6 +25,11 @@ function ProductList() {
     ]
   };
 
+  const handleAddToCart = (plant) => {
+    dispatch(addItem({ ...plant, quantity: 1 }));
+    setAdded({ ...added, [plant.id]: true });
+  };
+
   return (
     <div>
       <h1>Product List</h1>
@@ -29,11 +39,17 @@ function ProductList() {
           <h2>{category}</h2>
 
           {plants[category].map((plant) => (
-            <div key={plant.id}>
+            <div key={plant.id} style={{ marginBottom: "15px" }}>
               <img src={plant.img} alt={plant.name} />
               <p>{plant.name}</p>
               <p>₹{plant.price}</p>
-              <button>Add to Cart</button>
+
+              <button
+                onClick={() => handleAddToCart(plant)}
+                disabled={added[plant.id]}
+              >
+                {added[plant.id] ? "Added" : "Add to Cart"}
+              </button>
             </div>
           ))}
         </div>
